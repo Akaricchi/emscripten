@@ -585,6 +585,7 @@ var ASYNCIFY_IMPORTS = [
   'emscripten_idb_store', 'emscripten_idb_delete', 'emscripten_idb_exists',
   'emscripten_idb_load_blob', 'emscripten_idb_store_blob', 'SDL_Delay',
   'emscripten_scan_registers', 'emscripten_lazy_load_code',
+  'emscripten_fiber_swap',
   'wasi_unstable.fd_sync', '__wasi_fd_sync',
 ];
 
