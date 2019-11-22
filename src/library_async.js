@@ -219,6 +219,22 @@ mergeInto(LibraryManager.library, {
     );
   },
 
+  emscripten_fiber_create: function() {
+    throw 'emscripten_fiber_create is not implemented for fastcomp ASYNCIFY';
+  },
+  emscripten_fiber_create_from_current_context: function() {
+    throw 'emscripten_fiber_create_from_current_context is not implemented for fastcomp ASYNCIFY';
+  },
+  emscripten_fiber_recycle: function() {
+    throw 'emscripten_fiber_recycle is not implemented for fastcomp ASYNCIFY';
+  },
+  emscripten_fiber_free: function() {
+    throw 'emscripten_fiber_free is not implemented for fastcomp ASYNCIFY';
+  },
+  emscripten_fiber_swap: function() {
+    throw 'emscripten_fiber_swap is not implemented for fastcomp ASYNCIFY';
+  },
+
 #else // !WASM_BACKEND && ASYNCIFY
 
 #if EMTERPRETIFY_ASYNC
@@ -542,6 +558,22 @@ mergeInto(LibraryManager.library, {
     } else {
       EmterpreterAsync.setState(1);
     }
+  },
+
+  emscripten_fiber_create: function() {
+    throw 'emscripten_fiber_create is not implemented for EMTERPRETIFY_ASYNC';
+  },
+  emscripten_fiber_create_from_current_context: function() {
+    throw 'emscripten_fiber_create_from_current_context is not implemented for EMTERPRETIFY_ASYNC';
+  },
+  emscripten_fiber_recycle: function() {
+    throw 'emscripten_fiber_recycle is not implemented for EMTERPRETIFY_ASYNC';
+  },
+  emscripten_fiber_free: function() {
+    throw 'emscripten_fiber_free is not implemented for EMTERPRETIFY_ASYNC';
+  },
+  emscripten_fiber_swap: function() {
+    throw 'emscripten_fiber_swap is not implemented for EMTERPRETIFY_ASYNC';
   },
 
 #else // EMTERPRETIFY_ASYNC
@@ -970,6 +1002,16 @@ mergeInto(LibraryManager.library, {
     });
   },
 
+  emscripten_coroutine_create: function() {
+    throw 'emscripten_coroutine_create has been removed. Please use the Fibers API';
+  },
+  emscripten_coroutine_next: function() {
+    throw 'emscripten_coroutine_next has been removed. Please use the Fibers API';
+  },
+  emscripten_yield: function() {
+    throw 'emscripten_yield has been removed. Please use the Fibers API';
+  },
+
 #else // ASYNCIFY
   emscripten_sleep: function() {
     throw 'Please compile your program with async support in order to use asynchronous operations like emscripten_sleep';
@@ -991,6 +1033,21 @@ mergeInto(LibraryManager.library, {
   },
   emscripten_scan_registers: function(url, file) {
     throw 'Please compile your program with async support in order to use asynchronous operations like emscripten_scan_registers';
+  },
+  emscripten_fiber_create: function() {
+    throw 'Please compile your program with async support in order to use asynchronous operations like emscripten_fiber_create';
+  },
+  emscripten_fiber_create_from_current_context: function() {
+    throw 'Please compile your program with async support in order to use asynchronous operations like emscripten_fiber_create_from_current_context';
+  },
+  emscripten_fiber_recycle: function() {
+    throw 'Please compile your program with async support in order to use asynchronous operations like emscripten_fiber_recycle';
+  },
+  emscripten_fiber_free: function() {
+    throw 'Please compile your program with async support in order to use asynchronous operations like emscripten_fiber_free';
+  },
+  emscripten_fiber_swap: function() {
+    throw 'Please compile your program with async support in order to use asynchronous operations like emscripten_fiber_swap';
   },
 #endif // ASYNCIFY
 #endif // EMTERPRETIFY_ASYNC
