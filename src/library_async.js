@@ -859,7 +859,7 @@ mergeInto(LibraryManager.library, {
     {{{ makeSetValue('fib', 12, 'fstack_base', 'i32') }}};
 
     // init continuation (call user-supplied function on first entry)
-    Fibers.continuations[fib] = () => {
+    Fibers.continuations[fib] = function() {
 #if STACK_OVERFLOW_CHECK
       writeStackCookie();
 #endif
@@ -896,7 +896,7 @@ mergeInto(LibraryManager.library, {
     var fstack_base = {{{ makeGetValue('fib', 12, 'i32') }}};
     {{{ makeSetValue('fib', 4, 'fstack_base', 'i32') }}};
 
-    Fibers.continuations[fib] = () => {
+    Fibers.continuations[fib] = function() {
 #if STACK_OVERFLOW_CHECK
       writeStackCookie();
 #endif
@@ -914,8 +914,8 @@ mergeInto(LibraryManager.library, {
   emscripten_fiber_swap__sig: 'vii',
   emscripten_fiber_swap__deps: ["$Asyncify", "$Fibers"],
   emscripten_fiber_swap: function(f_old, f_new) {
-    return Asyncify.handleSleep((wakeUp) => {
-      var swap = () => {
+    return Asyncify.handleSleep(function(wakeUp) {
+      var swap = function() {
         /*
          * save caller context
          */
@@ -959,7 +959,7 @@ mergeInto(LibraryManager.library, {
        * until you start hitting call stack overflows. It might make sense to
        * expose this as a setting (TODO?)
        */
-      if(Fibers.swapCounter == 1000) {
+      if (Fibers.swapCounter == 1000) {
         Fibers.swapCounter = 0;
         Asyncify.afterUnwind = null;
         setTimeout(swap);
