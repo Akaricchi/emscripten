@@ -671,7 +671,7 @@ _emscripten_exit_soft_fullscreen
 _emscripten_exit_with_live_runtime
 _emscripten_fiber_create
 _emscripten_fiber_create_from_current_context
-_emscripten_fiber_free
+_emscripten_fiber_destroy
 _emscripten_fiber_recycle
 _emscripten_fiber_swap
 _emscripten_force_exit
