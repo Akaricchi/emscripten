@@ -889,14 +889,6 @@ mergeInto(LibraryManager.library, {
     });
   },
 
-  /*
-   * Layout of an ASYNCIFY Fiber structure
-   *
-   *  0 Asyncify context (Asyncify.currData)
-   *  4 STACKTOP
-   *  8 STACK_MAX
-   * 12 STACK_BASE
-   */
   $Fibers: {
     id: 0,  // last allocated fiber ID
     allocate: function(fiber) {
