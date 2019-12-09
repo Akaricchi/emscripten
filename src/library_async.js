@@ -808,7 +808,7 @@ mergeInto(LibraryManager.library, {
         Asyncify.currData = null;
         noExitRuntime = false;
 
-        if(!isNotYielding) {
+        if (!isNotYielding) {
           // Call all sleep callbacks now that the sleep-resume is all done.
           Asyncify.sleepCallbacks.forEach(function(func) {
             func();
