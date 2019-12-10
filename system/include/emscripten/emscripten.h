@@ -264,10 +264,10 @@ void emscripten_yield(void);
 /* Upstream backend + Asyncify only */
 typedef struct emscripten_fiber_s *emscripten_fiber;  // NOTE: not a real pointer; this is a handle to a JS object
 emscripten_fiber emscripten_fiber_create(em_arg_callback_func func, void *arg, void *stack, int stack_size);
-emscripten_fiber emscripten_fiber_create_from_current_context(void);
+emscripten_fiber emscripten_fiber_get_current(void);
 void emscripten_fiber_recycle(emscripten_fiber fiber, em_arg_callback_func func, void *arg);
 void emscripten_fiber_destroy(emscripten_fiber fiber);
-void emscripten_fiber_swap(emscripten_fiber old_fiber, emscripten_fiber new_fiber);
+void emscripten_fiber_swap(emscripten_fiber new_fiber);
 
 /* ===================================== */
 /* Internal APIs. Be careful with these. */

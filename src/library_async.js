@@ -891,6 +891,7 @@ mergeInto(LibraryManager.library, {
 
   $Fibers: {
     id: 0,  // last allocated fiber ID
+    current: 0,
     allocate: function(fiber) {
       var id = ++Fibers.id;
       Fibers[id] = fiber;
@@ -916,25 +917,29 @@ mergeInto(LibraryManager.library, {
     });
   },
 
-  emscripten_fiber_create_from_current_context__sig: 'i',
-  emscripten_fiber_create_from_current_context__deps: ['$Fibers'],
-  emscripten_fiber_create_from_current_context: function() {
-    return Fibers.allocate({
-      asyncifyData: 0,
-      stackBase: STACK_BASE,
-      stackMax: STACK_MAX,
+  emscripten_fiber_get_current__sig: 'i',
+  emscripten_fiber_get_current__deps: ['$Fibers'],
+  emscripten_fiber_get_current: function() {
+    if (!Fibers.current) {
+      Fibers.current = Fibers.allocate({
+        asyncifyData: 0,
+        stackBase: STACK_BASE,
+        stackMax: STACK_MAX,
 
-      // NOTE: We don't need to initialize the other fields, because swapping
-      // will overwrite them anyway. We can not swap into this fiber without
-      // swapping out of it first anyway, because we'd need a continuation
-      // function.
-      //
-      // It may be possible to support this by doing an Asyncify.handleSleep
-      // here just to capture the wakeUp callback and Asyncify data, but I'm not
-      // sure if it's a useful thing to support.
-      stackTop: 0,
-      continuation: null,
-    });
+        // NOTE: We don't need to initialize the other fields, because swapping
+        // will overwrite them anyway. We can not swap into this fiber without
+        // swapping out of it first anyway, because we'd need a continuation
+        // function.
+        //
+        // It may be possible to support this by doing an Asyncify.handleSleep
+        // here just to capture the wakeUp callback and Asyncify data, but I'm not
+        // sure if it's a useful thing to support.
+        stackTop: 0,
+        continuation: null,
+      });
+    }
+
+    return Fibers.current;
   },
 
   emscripten_fiber_recycle__sig: 'viii',
@@ -971,8 +976,9 @@ mergeInto(LibraryManager.library, {
   },
 
   emscripten_fiber_swap__sig: 'vii',
-  emscripten_fiber_swap__deps: ["$Asyncify", "$Fibers"],
-  emscripten_fiber_swap: function(oldFiberId, newFiberId) {
+  emscripten_fiber_swap__deps: ["$Asyncify", "$Fibers", "emscripten_fiber_get_current"],
+  emscripten_fiber_swap: function(newFiberId) {
+    var oldFiberId = _emscripten_fiber_get_current();
     var oldFiber = Fibers[oldFiberId];
     var newFiber = Fibers[newFiberId];
 
@@ -1003,6 +1009,7 @@ mergeInto(LibraryManager.library, {
           STACK_BASE = newFiber.stackBase;
           stackRestore(newFiber.stackTop);
 
+          Fibers.current = newFiberId;
           noExitRuntime = false;
           newFiber.continuation();
         };
