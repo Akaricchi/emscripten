@@ -900,7 +900,7 @@ mergeInto(LibraryManager.library, {
   },
 
   emscripten_fiber_create__sig: 'iiiii',
-  emscripten_fiber_create__deps: ['$Fibers', 'malloc'],
+  emscripten_fiber_create__deps: ['$Fibers'],
   emscripten_fiber_create: function(entryPoint, userData, stack, stackSize) {
     return Fibers.allocate({
       asyncifyData: 0,
@@ -917,7 +917,7 @@ mergeInto(LibraryManager.library, {
   },
 
   emscripten_fiber_create_from_current_context__sig: 'i',
-  emscripten_fiber_create_from_current_context__deps: ['$Fibers', 'malloc'],
+  emscripten_fiber_create_from_current_context__deps: ['$Fibers'],
   emscripten_fiber_create_from_current_context: function() {
     return Fibers.allocate({
       asyncifyData: 0,
@@ -958,7 +958,7 @@ mergeInto(LibraryManager.library, {
   },
 
   emscripten_fiber_destroy__sig: 'vi',
-  emscripten_fiber_destroy__deps: ['$Asyncify', '$Fibers', 'free'],
+  emscripten_fiber_destroy__deps: ['$Asyncify', '$Fibers'],
   emscripten_fiber_destroy: function(fiberId) {
     var fiber = Fibers[fiberId];
 
