@@ -128,6 +128,9 @@ See docs/process.md for more on how version tagging works.
   `emscripten_clear_immediate` are no-ops for ids that already fired. (#27720)
 - The `NODE_CODE_CACHING` setting was removed, as node's support for
   serializing WebAssembly modules has been missing for over 5 years now.
+- The fiber API (`emscripten/fiber.h`) is now supported under JSPI (`-sJSPI`).
+  When compiling with JSPI, the `asyncify_stack` argument to `emscripten_fiber_init`
+  and `emscripten_fiber_init_from_current_context` is optional and can be `NULL`.
 
 6.0.9 - 09/01/26
 ----------------
