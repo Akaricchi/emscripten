@@ -587,13 +587,22 @@ addToLibrary({
       return Fibers.nextFiberId;
     },
 
+    // unique object to distinguish it from legit errors
+    abandonedRejectReason: {},
+
     swap(oldFiber, newFiber) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         var oldId = Fibers.allocateFiberId();
         {{{ makeSetValue('oldFiber', C_STRUCTS.emscripten_fiber_s.asyncify_data + C_STRUCTS.asyncify_data_s.rewind_id, 'oldId', 'i32') }}};
-        Fibers.fiberResolvers.set(oldId, resolve);
+        Fibers.fiberResolvers.set(oldId, { resolve, reject });
         var entryPoint = {{{ makeGetValue('newFiber', C_STRUCTS.emscripten_fiber_s.entry, '*') }}};
         if (entryPoint) {
+          var stale = {{{ makeGetValue('newFiber', C_STRUCTS.emscripten_fiber_s.asyncify_data + C_STRUCTS.asyncify_data_s.rewind_id, 'i32') }}};
+          if (stale) {
+            Fibers.fiberResolvers.get(stale)?.reject(Fibers.abandonedRejectReason);
+            Fibers.fiberResolvers.delete(stale);
+            {{{ makeSetValue('newFiber', C_STRUCTS.emscripten_fiber_s.asyncify_data + C_STRUCTS.asyncify_data_s.rewind_id, 0, 'i32') }}};
+          }
           {{{ makeSetValue('newFiber', C_STRUCTS.emscripten_fiber_s.entry, 0, '*') }}};
           Fibers.restoreStack(newFiber);
 #if STACK_OVERFLOW_CHECK
@@ -607,7 +616,9 @@ addToLibrary({
           // guaranteeing that start() returns a Promise.
           var start = {{{ makeDynCall('vp', 'entryPoint', true) }}};
           start(userData).catch((e) => {
-            abort(String(e));
+            if (e !== Fibers.abandonedRejectReason) {
+              abort(String(e));
+            }
           });
         } else {
           var newId = {{{ makeGetValue('newFiber', C_STRUCTS.emscripten_fiber_s.asyncify_data + C_STRUCTS.asyncify_data_s.rewind_id, 'i32') }}};
@@ -620,7 +631,7 @@ addToLibrary({
 #endif
           Fibers.fiberResolvers.delete(newId);
           {{{ makeSetValue('newFiber', C_STRUCTS.emscripten_fiber_s.asyncify_data + C_STRUCTS.asyncify_data_s.rewind_id, 0, 'i32') }}};
-          resume(newFiber);
+          resume.resolve(newFiber);
         }
       });
     },
